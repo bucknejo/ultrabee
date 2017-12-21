@@ -1,0 +1,15 @@
+id
+guid
+is_active
+date_created
+date_updated
+name
+product_id
+description
+category
+sub_category
+is_available
+is_discontinued
+is_manufactured
+manufacturer_id
+tags -> array of search terms

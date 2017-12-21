@@ -1,0 +1,16 @@
+target/
+
+.idea
+*.ivs
+*.ipr
+*.iml
+*.log
+
+api/target
+bumblebee/target
+core/target
+drift/target
+grimlock/target
+strongarm/target
+
+

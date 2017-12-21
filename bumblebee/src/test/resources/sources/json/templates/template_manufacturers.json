@@ -1,0 +1,15 @@
+id
+guid
+is_active
+date_created
+date_updated
+name
+manufacturer_id
+description
+sector
+sub_sector
+is_retailer
+is_wholesaler
+tags -> array of search terms
+location -> location object
+distributors -> array of entities that take products
