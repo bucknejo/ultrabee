@@ -32,6 +32,7 @@ class BumblebeeExtractorSpec extends FlatSpec with Matchers with BumblebeeUtilit
     val actual = df.select($"manufacturer_id").limit(20)
 
     actual.collect().foreach(println)
+    actual.cache()
 
     assert(actual.count() === 20)
 

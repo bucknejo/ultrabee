@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.assertj>3.6.1</version.assertj>
-        <version.cucumber>1.2.5</version.cucumber>
+        <version.cucumber>2.0.0</version.cucumber>
         <version.junit>4.12</version.junit>
         <version.junit.params>1.1.1</version.junit.params>
         <version.mockito>2.12.0</version.mockito>
@@ -89,13 +89,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-scala_${version.spark.suffix}</artifactId>
             <version>${version.cucumber}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-core</artifactId>
+            <version>${version.cucumber}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
             <version>${version.cucumber}</version>
             <scope>test</scope>

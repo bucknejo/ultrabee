@@ -8,4 +8,7 @@ object BumblebeeConstants {
   val BANNER_ERROR: String = "!" * LOG_LINE_LENGTH
   val BANNER_EMPTY: String = " " * LOG_LINE_LENGTH
 
+  val MANUFACTURERS = "MANUFACTURERS"
+  val PRODUCTS = "PRODUCTS"
+
 }

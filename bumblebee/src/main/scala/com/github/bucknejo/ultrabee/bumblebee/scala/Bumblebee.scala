@@ -7,11 +7,13 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class Bumblebee(extractor: BumblebeeExtractor, transformer: BumblebeeTransformer, loader: BumblebeeLoader) extends Ingestible with BumblebeeUtility {
 
-  // TODO: do something to import some data into DataFrame(s)
   override def extract(spark: SparkSession, args: Array[String]): Map[String, DataFrame] = {
     val dataFrameMap = Map.newBuilder[String, DataFrame]
 
     try {
+
+      dataFrameMap.+=(BumblebeeConstants.MANUFACTURERS -> extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_MANUFACTURERS))
+      dataFrameMap.+=(BumblebeeConstants.PRODUCTS -> extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_PRODUCTS))
 
     } catch {
       case bumblebee: BumblebeeException =>
