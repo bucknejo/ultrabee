@@ -28,11 +28,21 @@ class Bumblebee(extractor: BumblebeeExtractor, transformer: BumblebeeTransformer
 
   }
 
-  // TODO: do something to transform provided DataFrame(s)
   override def transform(spark: SparkSession, args: Array[String], extract: Map[String, DataFrame]): Map[String, DataFrame] = {
+
+    import spark.implicits._
+
     val dataFrameMap = Map.newBuilder[String, DataFrame]
 
     try {
+
+      val manufacturers = extract(BumblebeeConstants.MANUFACTURERS)
+      val products = extract(BumblebeeConstants.PRODUCTS)
+
+      val joined = transformer.joinManufacturersWithProducts(spark, manufacturers, products)
+        .filter($"manufacturer_id" === "RRTL-MT6227-0318").orderBy("product_id")
+
+      dataFrameMap.+=(BumblebeeConstants.MANUFACTURERS_JOIN_PRODUCTS -> joined)
 
     } catch {
       case bumblebee: BumblebeeException =>
