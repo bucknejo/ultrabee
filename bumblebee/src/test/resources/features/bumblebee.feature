@@ -30,3 +30,31 @@ Feature: Bumblebee Integration Test
       | RRTL-MT6227-0318       | Steuber-Kiehn            | NWDB-KA2482-4825  | Effertz, Kling and Brown                | false                | true                    | true                    |
       | RRTL-MT6227-0318       | Steuber-Kiehn            | NWNG-FT8567-5880  | Cruickshank, Konopelski and Heidenreich | false                | false                   | false                   |
       | RRTL-MT6227-0318       | Steuber-Kiehn            | POMQ-EN3888-9662  | Rolfson-Zulauf                          | false                | false                   | true                    |
+
+  Scenario: Filter manufactures by city and state, sort by zip
+    When Run Bumblebee for 20171221
+    And Filter MANUFACTURERS_LOCATIONS from TRANSFORM order by address1,zip
+      | city:String | state:string |
+      | Phoenix     | Arizona      |
+      | Tucson      | Arizona      |
+      | Escondido   | California   |
+      | San Diego   | California   |
+      | San Jose    | California   |
+    Then Compare DataFrame MANUFACTURERS_FILTER_CITY_STATE from TRANSFORM order by address1,zip
+      | address1:string      | city:string | state:string | zip:string | country:string |
+      | 574 Oak Valley Drive | Phoenix     | Arizona      | 85072      | US             |
+      | 9 Thompson Place     | Phoenix     | Arizona      | 85099      | US             |
+      | 70278 Texas Road     | Tucson      | Arizona      | 85710      | US             |
+      | 2557 Scoville Circle | Tucson      | Arizona      | 85715      | US             |
+      | 54229 Maple Drive    | Tucson      | Arizona      | 85715      | US             |
+      | 9 Northview Place    | Tucson      | Arizona      | 85715      | US             |
+      | 59 Annamark Place    | Tucson      | Arizona      | 85748      | US             |
+      | 47 Armistice Trail   | Escondido   | California   | 92030      | US             |
+      | 37 Warner Road       | San Diego   | California   | 92105      | US             |
+      | 2 Onsgard Street     | San Diego   | California   | 92115      | US             |
+      | 33208 Clemons Place  | San Diego   | California   | 92132      | US             |
+      | 803 Stephen Point    | San Diego   | California   | 92160      | US             |
+      | 8 Burrows Alley      | San Jose    | California   | 95128      | US             |
+      | 8099 Hoffman Trail   | San Jose    | California   | 95133      | US             |
+      | 1626 Darwin Lane     | San Jose    | California   | 95173      | US             |
+

@@ -42,7 +42,10 @@ class Bumblebee(extractor: BumblebeeExtractor, transformer: BumblebeeTransformer
       val joined = transformer.joinManufacturersWithProducts(spark, manufacturers, products)
         .filter($"manufacturer_id" === "RRTL-MT6227-0318").orderBy("product_id")
 
+      val locations = transformer.locations(spark, manufacturers)
+
       dataFrameMap.+=(BumblebeeConstants.MANUFACTURERS_JOIN_PRODUCTS -> joined)
+      dataFrameMap.+=(BumblebeeConstants.MANUFACTURERS_LOCATIONS -> locations)
 
     } catch {
       case bumblebee: BumblebeeException =>
