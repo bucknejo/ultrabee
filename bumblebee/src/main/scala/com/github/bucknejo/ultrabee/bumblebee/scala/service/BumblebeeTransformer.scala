@@ -23,4 +23,9 @@ class BumblebeeTransformer {
 
   }
 
+  def locations(spark: SparkSession, manufacturers: DataFrame): DataFrame = {
+    import spark.implicits._
+    manufacturers.select($"location.address1", $"location.city", $"location.state", $"location.zip", $"location.country")
+  }
+
 }

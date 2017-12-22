@@ -3,6 +3,7 @@ package com.github.bucknejo.ultrabee.bumblebee.scala
 import java.io.File
 
 import com.github.bucknejo.ultrabee.bumblebee.scala.service.{BumblebeeExtractor, BumblebeeLoader, BumblebeeTransformer}
+import com.github.bucknejo.ultrabee.bumblebee.scala.util.BumblebeeUtility
 import cucumber.api.DataTable
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.apache.spark.sql.functions.col
@@ -14,7 +15,7 @@ import scala.collection.mutable
 import scala.io.Source
 import scala.util.Try
 
-class BumblebeeSteps extends ScalaDsl with EN with BumblebeeHelper {
+class BumblebeeSteps extends ScalaDsl with EN with BumblebeeUtility {
 
   val appName = "bumblebee-steps"
   val master = "local[*]"
@@ -62,6 +63,27 @@ class BumblebeeSteps extends ScalaDsl with EN with BumblebeeHelper {
 
   }
 
+  When("""^Filter ?(.*) from ?(.*) order by ?(.*)$""") { (name: String, level: String, orderBy: String, data: DataTable) =>
+
+    import spark.implicits._
+
+    val df: DataFrame = results.result()(level)(name)
+    val filterColumns = convertDataTableToDataFrame(data)
+
+    val filters = Map.newBuilder[String, List[String]]
+    val orders = orderBy.split(',').toList
+
+    filterColumns.columns.foreach(name => {
+      filters.+=(name -> filterColumns.select(name).map(r => r(0).asInstanceOf[String]).collect().toList.distinct)
+    })
+
+    val filtered = filterDataFrame(df, filters.result())
+    val ordered = orderDataFrame(filtered, orders)
+
+    results.+=(TRANSFORM -> Map("MANUFACTURERS_FILTER_CITY_STATE" -> ordered))
+
+  }
+
   Then("""^Compare DataFrame ?(.*) from ?(.*) order by ?(.*)$""") { (name: String, level: String, orderBy: String, data: DataTable) =>
 
     logger.info(s"s[${this.getClass.getName}] name: $name")
@@ -69,9 +91,12 @@ class BumblebeeSteps extends ScalaDsl with EN with BumblebeeHelper {
     logger.info(s"s[${this.getClass.getName}] orderBy: $orderBy")
 
     val df: DataFrame = results.result()(level)(name)
+    val orders = orderBy.split(',').toList
     val header = headersFromRawDataTable(data)
-    val actual = df.select(columnsFromHeader(header).map(col): _*).orderBy(orderBy).take(10)
+    val take = rowsFromRawDataTable(data).size
+    val actual = orderDataFrame(df.select(columnsFromHeader(header).map(col): _*), orders).take(take)
     val expected = convertDataTableToDataFrame(data).collect()
+
 
     assert(actual.length == expected.length)
 

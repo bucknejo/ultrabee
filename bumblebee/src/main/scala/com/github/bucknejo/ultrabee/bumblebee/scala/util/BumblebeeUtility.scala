@@ -4,7 +4,9 @@ import java.io.{File, FileInputStream}
 import java.util.Properties
 
 import org.apache.log4j.{LogManager, Logger}
+import org.apache.spark.sql.DataFrame
 
+import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
 trait BumblebeeUtility {
@@ -43,6 +45,40 @@ trait BumblebeeUtility {
       new File(getClass.getClassLoader.getResource(path).getFile).getAbsolutePath
     else
       path
+  }
+
+  @tailrec final def filterDataFrame(dataFrame: DataFrame, filters: Map[String, List[String]]): DataFrame = {
+
+    import org.apache.spark.sql.functions.col
+
+    if (filters.isEmpty) dataFrame
+    else {
+      val filter = filters.head
+      val reducedFilters = filters.filterKeys(_ != filter._1)
+      val filteredDataFrame = if (dataFrame.columns.contains(filter._1)) {
+        dataFrame.filter(col(filter._1).isin(filter._2: _*))
+      } else {
+        dataFrame
+      }
+      filterDataFrame(filteredDataFrame, reducedFilters)
+    }
+
+  }
+
+  @tailrec final def orderDataFrame(dataFrame: DataFrame, orders: List[String]): DataFrame = {
+
+    if (orders.isEmpty) dataFrame
+    else {
+      val order = orders.head
+      val reducedOrders = orders.tail
+      val orderedDataFrame = if (dataFrame.columns.contains(order)) {
+        dataFrame.orderBy(order)
+      } else {
+        dataFrame
+      }
+      orderDataFrame(orderedDataFrame, reducedOrders)
+    }
+
   }
 
 }
