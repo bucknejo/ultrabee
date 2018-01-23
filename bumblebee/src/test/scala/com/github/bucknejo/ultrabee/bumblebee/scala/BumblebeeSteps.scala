@@ -31,6 +31,8 @@ class BumblebeeSteps extends ScalaDsl with EN with BumblebeeUtility {
   val TRANSFORM = "TRANSFORM"
   val LOAD = "LOAD"
 
+  val COMPLEX_COLUMNS = List("location")
+
   Before { scenario =>
     logger.info(s"s[${this.getClass.getName}] Before scenario: ${scenario.getName}")
     spark.newSession()
@@ -94,7 +96,9 @@ class BumblebeeSteps extends ScalaDsl with EN with BumblebeeUtility {
     val orders = orderBy.split(',').toList
     val header = headersFromRawDataTable(data)
     val take = rowsFromRawDataTable(data).size
-    val actual = orderDataFrame(df.select(columnsFromHeader(header).map(col): _*), orders).take(take)
+    val actual = deconstructComplexTypes(
+      orderDataFrame(df.select(columnsFromHeader(header).map(col): _*), orders),
+      COMPLEX_COLUMNS).take(take)
     val expected = convertDataTableToDataFrame(data).collect()
 
 
@@ -118,6 +122,21 @@ class BumblebeeSteps extends ScalaDsl with EN with BumblebeeUtility {
 
   def columnsFromHeader(header: List[String]): List[String] = {
     header.map(_.split(':')(0))
+  }
+
+  def deconstructComplexTypes(dataFrame: DataFrame, complexColumns: List[String]): DataFrame = {
+
+    import org.apache.spark.sql.functions.{to_json, struct, col}
+
+    val columnNames = dataFrame.columns.toSeq
+
+    columnNames.foldLeft(dataFrame) { (df, columnName) =>
+      df.withColumn(
+        columnName,
+        if (complexColumns.contains(columnName)) to_json(struct(columnName)) else col(columnName)
+      )
+    }
+
   }
 
   def convertDataTableToDataFrame(data: DataTable): DataFrame = {
@@ -149,7 +168,7 @@ class BumblebeeSteps extends ScalaDsl with EN with BumblebeeUtility {
         val values = row
           .values().asScala
           .zip(fieldSpec)
-          .map { case (v, (fn, dt)) => (v, dt) }
+          .map { case (v, (_, dt)) => (v, dt) }
           .map {
             case (v, DataTypes.IntegerType) => v.toInt
             case (v, DataTypes.DoubleType) => v.toDouble
