@@ -1,4 +1,4 @@
-package com.github.bucknejo.ultrabee.bumblebee.scala.examples
+package com.github.bucknejo.ultrabee.drift.scala.examples.basic
 
 case class BasicCaseClass(a: String, b: String)
 
