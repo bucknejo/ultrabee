@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream}
 import java.util.Properties
 
 import org.apache.log4j.{LogManager, Logger}
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
@@ -12,6 +12,13 @@ import scala.util.{Failure, Success, Try}
 trait BumblebeeUtility {
 
   @transient lazy val logger: Logger = LogManager.getLogger("Bumblebee")
+
+  val appName = "spark-local-tester"
+  val master = "local"
+  val spark: SparkSession = SparkSession.builder()
+    .appName(appName)
+    .master(master)
+    .getOrCreate()
 
   val properties: Properties = Try({
     val prop: Properties = new Properties()

@@ -17,13 +17,6 @@ import scala.util.Try
 
 class BumblebeeSteps extends ScalaDsl with EN with BumblebeeUtility {
 
-  val appName = "bumblebee-steps"
-  val master = "local[*]"
-  val spark: SparkSession = SparkSession.builder()
-    .appName(appName)
-    .master(master)
-    .getOrCreate()
-
   val results: mutable.Builder[(String, Map[String, DataFrame]), Map[String, Map[String, DataFrame]]] =
     Map.newBuilder[String, Map[String, DataFrame]]
 

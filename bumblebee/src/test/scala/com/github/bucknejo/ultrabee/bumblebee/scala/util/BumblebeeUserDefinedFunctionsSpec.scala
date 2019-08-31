@@ -1,20 +1,15 @@
 package com.github.bucknejo.ultrabee.bumblebee.scala.util
 
-import org.apache.spark.sql.SparkSession
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
-class BumblebeeUserDefinedFunctionsSpec extends FlatSpec with Matchers with BumblebeeUserDefinedFunctions {
+@RunWith(classOf[JUnitRunner])
+class BumblebeeUserDefinedFunctionsSpec extends FlatSpec with Matchers with BumblebeeUserDefinedFunctions with BumblebeeUtility {
 
-  val appName = "udf-spec"
-  val master = "local[*]"
-  val spark: SparkSession = SparkSession.builder()
-    .appName(appName)
-    .master(master)
-    .getOrCreate()
+  import spark.implicits._
 
   "udf updateTags" should "return a column with updated tags" in {
-
-    import spark.implicits._
 
     val original = Array("TEST01", "TEST02", "TEST03")
     val updates = Array("UPDATE01", "TEST02", "UPDATE03")
@@ -33,8 +28,6 @@ class BumblebeeUserDefinedFunctionsSpec extends FlatSpec with Matchers with Bumb
 
   it should "return original array when updates are null" in {
 
-    import spark.implicits._
-
     val original = Array("TEST01", "TEST02", "TEST03")
     val updates = null
 
@@ -51,8 +44,6 @@ class BumblebeeUserDefinedFunctionsSpec extends FlatSpec with Matchers with Bumb
   }
 
   it should "return updates array when originals are null" in {
-
-    import spark.implicits._
 
     val original = null
     val updates = Array("TEST01", "TEST02", "TEST03")

@@ -1,19 +1,16 @@
 package com.github.bucknejo.ultrabee.bumblebee.scala.service
 
 import com.github.bucknejo.ultrabee.bumblebee.scala.util.BumblebeeUtility
-import org.apache.spark.sql.SparkSession
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
+@RunWith(classOf[JUnitRunner])
 class BumblebeeExtractorSpec extends FlatSpec with Matchers with BumblebeeUtility {
 
   val extractor = new BumblebeeExtractor
 
-  val appName = "extractor-spec"
-  val master = "local[*]"
-  val spark: SparkSession = SparkSession.builder()
-    .appName(appName)
-    .master(master)
-    .getOrCreate()
+  import spark.implicits._
 
   "loadDataFrameFromJson" should "load a manufacturers JSON file into a dataframe" in {
 
@@ -25,8 +22,6 @@ class BumblebeeExtractorSpec extends FlatSpec with Matchers with BumblebeeUtilit
   }
 
   it should "return 20 manufacturer ids" in {
-
-    import spark.implicits._
 
     val df = extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_MANUFACTURERS)
     val actual = df.select($"manufacturer_id").limit(20)

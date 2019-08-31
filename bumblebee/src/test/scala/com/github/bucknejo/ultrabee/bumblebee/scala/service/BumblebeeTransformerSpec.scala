@@ -1,24 +1,19 @@
 package com.github.bucknejo.ultrabee.bumblebee.scala.service
 
 import com.github.bucknejo.ultrabee.bumblebee.scala.util.BumblebeeUtility
-import org.apache.spark.sql.SparkSession
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
+@RunWith(classOf[JUnitRunner])
 class BumblebeeTransformerSpec extends FlatSpec with Matchers with BumblebeeUtility {
 
   val extractor = new BumblebeeExtractor
   val transformer = new BumblebeeTransformer
 
-  val appName = "transformer-spec"
-  val master = "local[*]"
-  val spark: SparkSession = SparkSession.builder()
-    .appName(appName)
-    .master(master)
-    .getOrCreate()
+  import spark.implicits._
 
   "joinManufacturersWithProducts" should "return a DataFrame of joined data between manufacturers and products" in {
-
-    import spark.implicits._
 
     val manufacturers = extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_MANUFACTURERS)
     val products = extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_PRODUCTS)
@@ -31,8 +26,6 @@ class BumblebeeTransformerSpec extends FlatSpec with Matchers with BumblebeeUtil
 
 
   it should "explode a location column" in {
-
-    import spark.implicits._
 
     val df = extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_MANUFACTURERS)
 
@@ -53,8 +46,6 @@ class BumblebeeTransformerSpec extends FlatSpec with Matchers with BumblebeeUtil
   }
 
   it should "create lists for each column from DataFrame" in {
-
-    import spark.implicits._
 
     val df = extractor.loadDataFrameFromJson(spark, STATIC_DATA_PATH_MANUFACTURERS)
 
