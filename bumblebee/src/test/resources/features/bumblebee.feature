@@ -31,6 +31,7 @@ Feature: Bumblebee Integration Test
       | RRTL-MT6227-0318       | Steuber-Kiehn            | NWNG-FT8567-5880  | Cruickshank, Konopelski and Heidenreich | false                | false                   | false                   |
       | RRTL-MT6227-0318       | Steuber-Kiehn            | POMQ-EN3888-9662  | Rolfson-Zulauf                          | false                | false                   | true                    |
 
+  @ignore
   Scenario: Filter manufactures by city and state, sort by zip
     When Run Bumblebee for 20171221
     And Filter MANUFACTURERS_LOCATIONS from TRANSFORM order by address1,zip

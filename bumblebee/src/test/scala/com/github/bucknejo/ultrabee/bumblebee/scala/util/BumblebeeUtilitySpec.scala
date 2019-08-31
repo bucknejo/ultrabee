@@ -1,16 +1,12 @@
 package com.github.bucknejo.ultrabee.bumblebee.scala.util
 
 import org.apache.spark.sql.SparkSession
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
+@RunWith(classOf[JUnitRunner])
 class BumblebeeUtilitySpec extends FlatSpec with Matchers with BumblebeeUtility {
-
-  val appName = "utility-spec"
-  val master = "local[*]"
-  val spark: SparkSession = SparkSession.builder()
-    .appName(appName)
-    .master(master)
-    .getOrCreate()
 
   "filterDataFrame" should "recursively filter a DataFrame" in {
 

@@ -2,7 +2,7 @@ package com.github.bucknejo.ultrabee.api.scala
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-trait Ingestible {
+trait Ingestible extends Object {
 
   def extract(spark: SparkSession, args: Array[String]): Map[String, DataFrame]
   def transform(spark: SparkSession, args: Array[String], extract: Map[String, DataFrame]): Map[String, DataFrame]
