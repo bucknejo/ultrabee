@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.assertj>3.6.1</version.assertj>
         <version.cucumber>2.0.0</version.cucumber>
-        <version.junit>4.12</version.junit>
+        <version.junit>4.13.1</version.junit>
         <version.junit.params>1.1.1</version.junit.params>
         <version.mockito>2.12.0</version.mockito>
         <version.scala>2.11.8</version.scala>
